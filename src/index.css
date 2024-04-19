@@ -38,3 +38,7 @@ code {
 .react-time-picker--disabled {
   background-color: transparent;
 }
+
+.hour-button {
+  font-size: 11px;
+}

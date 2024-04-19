@@ -226,12 +226,12 @@ const AddEventModal = () => {
       id="default-modal"
       tabIndex={-1}
       aria-hidden="true"
-      className="bg-black bg-opacity-20 overflow-y-auto overflow-x-hidden fixed flex top-0 right-0 left-0 z-40 justify-center items-start w-full md:inset-0 max-h-full"
+      className="bg-black bg-opacity-20 overflow-y-hidden overflow-x-hidden fixed flex top-0 left-0 z-40 justify-center items-start size-full md:inset-0"
       onClick={() => closeModal()}
     >
-      <div className="relative p-4 max-h-full">
+      <div className="p-4">
         <div
-          className="relative rounded-lg min-w-64 bg-white shadow"
+          className="rounded-lg bg-white shadow"
           onClick={(e) => e.stopPropagation()}
         >
           <header className="flex items-center justify-between p-2 md:p-3 border-b rounded-t">
@@ -290,7 +290,7 @@ const AddEventModal = () => {
                 name="phoneNumber"
                 type="text"
                 className="outline-none"
-                placeholder="223 500-000"
+                placeholder="22350000"
                 value={event.client_data.phone}
                 onChange={onChangePhone}
               />
@@ -352,7 +352,7 @@ const AddEventModal = () => {
             <span className="p-2.5 flex flex-col bg-white border border-t-0 border-gray-300 text-gray-900 text-sm rounded-bl-lg rounded-br-lg focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500">
               <div className="flex flex-row w-full">
                 <div className="flex flex-col w-full">
-                  <span>Horario de inicio *</span>
+                  <span>Hora de inicio *</span>
                   <TimePicker
                     onChange={onChangeHourStart}
                     value={event.hour.start}
@@ -362,7 +362,7 @@ const AddEventModal = () => {
                   />
                 </div>
                 <div className="flex flex-col w-full justify-end text-right">
-                  <span>Horario de fin</span>
+                  <span>Hora de fin</span>
                   <TimePicker
                     value={event.hour.end}
                     clearIcon={false}
@@ -378,7 +378,7 @@ const AddEventModal = () => {
                     id={`button-${button.id}`}
                     data-modal-hide="default-modal"
                     type="button"
-                    className={`py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none rounded-lg border w-24 ${
+                    className={`py-2.5 px-5 font-medium text-gray-900 focus:outline-none rounded-lg border w-20 hour-button sm:text-sm sm:w-24 ${
                       button.isSelected
                         ? "bg-blue-500 hover:bg-blue-600 border-blue-600 ring-transparent text-white font-bold"
                         : "bg-white hover:bg-gray-100 border-gray-300 focus:ring-4 focus:ring-gray-100"

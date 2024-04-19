@@ -4,7 +4,7 @@ const SpinnerModal = () => {
       id="default-modal"
       tabIndex={-1}
       aria-hidden="true"
-      className="bg-black bg-opacity-40 overflow-y-auto overflow-x-hidden fixed flex top-0 right-0 left-0 z-40 justify-center items-center w-full md:inset-0 max-h-full"
+      className="bg-black bg-opacity-40 overflow-y-auto overflow-x-hidden fixed flex top-0 left-0 z-40 justify-center items-center size-full md:inset-0"
     >
       <div role="status">
         <svg
