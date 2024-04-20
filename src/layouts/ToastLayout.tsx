@@ -36,7 +36,7 @@ const ToastLayout: FunctionComponent<{ children: any }> = (props) => {
   return (
     <ToastContext.Provider value={{ registerToast, closeToast }}>
       {props.children}
-      <div className="absolute bottom-0 right-0 px-7 py-5 z-50">
+      <div className="fixed bottom-0 right-0 px-7 py-5 z-50">
         {toastList.map((toast) => (
           <ToastBuilder data={{ ...toast }} />
         ))}

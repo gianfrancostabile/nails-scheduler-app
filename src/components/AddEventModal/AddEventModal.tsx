@@ -35,6 +35,8 @@ const initialStateEvent: EventData = {
     end: "00:00",
   },
 };
+const PHONE_REGEX = "^(\\+?54)? ?(0)?([1-9])([0-9]{2})? ?([1-9])([0-9]{2}) ?([0-9]{4})$";
+const EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
 
 const AddEventModal = () => {
   const now = new Date();
@@ -184,6 +186,20 @@ const AddEventModal = () => {
     if (!event.client_data.name) {
       registerToast({
         text: "El nombre del cliente es requerido",
+        type: ToastType.ERROR,
+      });
+      return false;
+    }
+    if (event.client_data.phone && !event.client_data.phone.match(PHONE_REGEX)) {
+      registerToast({
+        text: "El formato del teléfono es incorrecto",
+        type: ToastType.ERROR,
+      });
+      return false;
+    }
+    if (event.client_data.email && !event.client_data.email.match(EMAIL_REGEX)) {
+      registerToast({
+        text: "El formato del email es incorrecto",
         type: ToastType.ERROR,
       });
       return false;
