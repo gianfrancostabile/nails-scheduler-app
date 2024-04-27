@@ -4,8 +4,8 @@ import "moment/locale/es-mx";
 import { useContext } from "react";
 import { Calendar as BigCalendar, momentLocalizer } from "react-big-calendar";
 import { SchedulerContext } from "../layouts/SchedulerLayout";
-import EventData from "../models/EventData";
-import EventCalendar from "../models/EventCalendar";
+import EventData from "../models/event/EventData";
+import EventCalendar from "../models/event/EventCalendar";
 
 const localizer = momentLocalizer(moment);
 

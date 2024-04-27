@@ -1,8 +1,8 @@
-import EventData from "../models/EventData";
+import EventData from "../models/event/EventData";
 import EventRepository from "../repository/EventRepository";
 
-async function findAll(): Promise<EventData[]> {
-  return await EventRepository.findAll();
+async function findAll(uid?: string): Promise<EventData[]> {
+  return await EventRepository.findAll(uid);
 }
 
 async function save(event: EventData) {

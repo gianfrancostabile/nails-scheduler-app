@@ -1,16 +1,56 @@
-import { BrowserRouter as Router } from "react-router-dom";
-import SchedulerLayout from "./layouts/SchedulerLayout";
+import {
+  Navigate,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import HomeLayout from "./layouts/HomeLayout";
 import ToastLayout from "./layouts/ToastLayout";
+import { render } from "@testing-library/react";
+import { createContext, useEffect, useState } from "react";
+import { User, onAuthStateChanged } from "firebase/auth";
+import FirebaseAuthentication from "./configuration/FirebaseAuthentication";
+
+interface UserPropsContext {
+  user: User | undefined;
+}
+
+const initialPropsContext: UserPropsContext = {
+  user: undefined,
+};
+
+export const UserContext = createContext(initialPropsContext);
 
 function App() {
+  const [user, setUser] = useState<User | undefined>(undefined);
+
+  useEffect(() => {
+    onAuthStateChanged(FirebaseAuthentication, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(undefined);
+      }
+    });
+  }, []);
+
   return (
-    <Router>
-      <div className="relative lg:mt-3 mx-2 2xl:mx-36 lg:mx-20 md:mx-8 sm:mx-4">
-        <ToastLayout>
-          <SchedulerLayout />
-        </ToastLayout>
-      </div>
-    </Router>
+    <UserContext.Provider value={{ user }}>
+      <ToastLayout>
+        <Router>
+          <Routes>
+            <Route
+              path="/"
+              element={user ? <HomeLayout /> : <Navigate to="/login" />}
+            />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </Router>
+      </ToastLayout>
+    </UserContext.Provider>
   );
 }
 

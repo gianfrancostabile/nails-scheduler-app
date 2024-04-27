@@ -3,11 +3,14 @@ import moment from "moment";
 import { ChangeEvent, useContext, useEffect, useState } from "react";
 import TimePicker from "react-time-picker";
 import Datepicker from "tailwind-datepicker-react";
-import { SchedulerContext } from "../../layouts/SchedulerLayout";
-import { ToastContext } from "../../layouts/ToastLayout";
-import EventData from "../../models/EventData";
-import { ToastType } from "../toast/ToastBuilder";
+import { SchedulerContext } from "../layouts/SchedulerLayout";
+import { ToastContext } from "../layouts/ToastLayout";
+import EventData from "../models/event/EventData";
+import { ToastType } from "./toast/ToastBuilder";
 import deepEqual from "deep-equal";
+import DefaultInput from "./util/DefaultInput";
+import { EMAIL_REGEX, PHONE_REGEX } from "../utils/Constants";
+import { UserContext } from "../App";
 
 interface TimeButton {
   id: string;
@@ -24,6 +27,7 @@ const initialStateTimeButtons: TimeButton[] = [
 ];
 const initialStateEvent: EventData = {
   id: undefined,
+  created_by: "",
   client_data: {
     name: "",
     phone: "",
@@ -35,8 +39,6 @@ const initialStateEvent: EventData = {
     end: "00:00",
   },
 };
-const PHONE_REGEX = "^(\\+?54)? ?(0)?([1-9])([0-9]{2})? ?([1-9])([0-9]{2}) ?([0-9]{4})$";
-const EMAIL_REGEX = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
 
 const AddEventModal = () => {
   const now = new Date();
@@ -44,6 +46,7 @@ const AddEventModal = () => {
   const { selectedEvent, submitEvent, deleteEvent, closeAddEventModal } =
     useContext(SchedulerContext);
   const { registerToast } = useContext(ToastContext);
+  const { user } = useContext(UserContext);
 
   const [event, updateEvent] = useState(initialStateEvent);
   const [isEventUpdated, setIsEventUpdated] = useState(true);
@@ -142,8 +145,12 @@ const AddEventModal = () => {
     });
   };
 
-  const submitForm = async () => {
+  const submitForm = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
     if (validateFormData()) {
+      event.created_by = user ? user.uid : "";
       await submitEvent(event);
       if (event.id) {
         registerToast({
@@ -190,14 +197,20 @@ const AddEventModal = () => {
       });
       return false;
     }
-    if (event.client_data.phone && !event.client_data.phone.match(PHONE_REGEX)) {
+    if (
+      event.client_data.phone &&
+      !event.client_data.phone.match(PHONE_REGEX)
+    ) {
       registerToast({
         text: "El formato del teléfono es incorrecto",
         type: ToastType.ERROR,
       });
       return false;
     }
-    if (event.client_data.email && !event.client_data.email.match(EMAIL_REGEX)) {
+    if (
+      event.client_data.email &&
+      !event.client_data.email.match(EMAIL_REGEX)
+    ) {
       registerToast({
         text: "El formato del email es incorrecto",
         type: ToastType.ERROR,
@@ -246,7 +259,7 @@ const AddEventModal = () => {
       onClick={() => closeModal()}
     >
       <div className="p-4">
-        <div
+        <form
           className="rounded-lg bg-white shadow"
           onClick={(e) => e.stopPropagation()}
         >
@@ -257,7 +270,6 @@ const AddEventModal = () => {
             <button
               type="button"
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-              data-modal-hide="default-modal"
               onClick={() => closeModal()}
             >
               <svg
@@ -279,53 +291,33 @@ const AddEventModal = () => {
             </button>
           </header>
           <div className="p-2 md:p-3 space-y-0 flex flex-col">
-            <label
-              htmlFor="clientName"
-              className="flex flex-col bg-white border border-gray-300 text-gray-900 text-sm rounded-tl-lg rounded-tr-lg p-2.5 focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500"
-            >
-              <span>Nombre del cliente *</span>
-              <input
-                id="clientName"
-                name="clientName"
-                type="text"
-                className="outline-none"
-                placeholder="Juan Perez"
-                autoFocus={true}
-                value={event.client_data.name}
-                maxLength={50}
-                onChange={onChangeName}
-              />
-            </label>
-            <label
-              htmlFor="phoneNumber"
-              className="flex flex-col bg-white border border-t-0 border-gray-300 text-gray-900 text-sm p-2.5 focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500"
-            >
-              <span>Teléfono</span>
-              <input
-                id="phoneNumber"
-                name="phoneNumber"
-                type="text"
-                className="outline-none"
-                placeholder="22350000"
-                value={event.client_data.phone}
-                onChange={onChangePhone}
-              />
-            </label>
-            <label
-              htmlFor="email"
-              className="flex flex-col bg-white border border-t-0 border-gray-300 text-gray-900 text-sm p-2.5 focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500"
-            >
-              <span>Email</span>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                className="outline-none"
-                placeholder="email@gmail.com"
-                value={event.client_data.email}
-                onChange={onChangeEmail}
-              />
-            </label>
+            <DefaultInput
+              id="clientName"
+              fieldName="Nombre del cliente *"
+              type="text"
+              placeholder="Juan Perez"
+              fieldValue={event.client_data.name}
+              onChange={onChangeName}
+              autofocus={true}
+              maxLength={50}
+              isFirst={true}
+            />
+            <DefaultInput
+              id="phoneNumber"
+              fieldName="Teléfono"
+              type="text"
+              placeholder="22350000"
+              fieldValue={event.client_data.phone}
+              onChange={onChangePhone}
+            />
+            <DefaultInput
+              id="email"
+              fieldName="Email"
+              type="email"
+              placeholder="email@gmail.com"
+              fieldValue={event.client_data.email}
+              onChange={onChangeEmail}
+            />
             <label
               htmlFor="day"
               className="p-2.5 flex flex-col bg-white border border-t-0 border-gray-300 text-gray-900 text-sm focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500"
@@ -392,7 +384,6 @@ const AddEventModal = () => {
                 {timeButtons.map((button) => (
                   <button
                     id={`button-${button.id}`}
-                    data-modal-hide="default-modal"
                     type="button"
                     className={`py-2.5 px-5 font-medium text-gray-900 focus:outline-none rounded-lg border w-20 hour-button sm:text-sm sm:w-24 ${
                       button.isSelected
@@ -410,7 +401,6 @@ const AddEventModal = () => {
           {event.id ? (
             <footer className="flex items-center justify-evenly p-2 md:p-3 border-t border-gray-200 rounded-b">
               <button
-                data-modal-hide="default-modal"
                 type="button"
                 className="text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm p-2.5 text-center flex-grow-0"
                 onClick={() => onDeleteEvent(event.id)}
@@ -435,8 +425,7 @@ const AddEventModal = () => {
               </button>
               <div className="flex items-center justify-end flex-grow">
                 <button
-                  data-modal-hide="default-modal"
-                  type="button"
+                  type="submit"
                   className="text-white bg-amber-500 hover:bg-amber-600 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center disabled:cursor-not-allowed disabled:bg-gray-200 disabled:hover:bg-gray-200"
                   onClick={submitForm}
                   disabled={isEventUpdated}
@@ -444,7 +433,6 @@ const AddEventModal = () => {
                   Modificar
                 </button>
                 <button
-                  data-modal-hide="default-modal"
                   type="button"
                   className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-4 focus:ring-gray-100"
                   onClick={() => closeModal()}
@@ -456,15 +444,13 @@ const AddEventModal = () => {
           ) : (
             <footer className="flex items-center justify-end p-2 md:p-3 border-t border-gray-200 rounded-b">
               <button
-                data-modal-hide="default-modal"
-                type="button"
+                type="submit"
                 className="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                 onClick={submitForm}
               >
                 Crear
               </button>
               <button
-                data-modal-hide="default-modal"
                 type="button"
                 className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-4 focus:ring-gray-100"
                 onClick={() => closeModal()}
@@ -473,7 +459,7 @@ const AddEventModal = () => {
               </button>
             </footer>
           )}
-        </div>
+        </form>
       </div>
     </div>
   );

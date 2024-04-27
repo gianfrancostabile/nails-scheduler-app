@@ -1,13 +1,16 @@
-import { createContext, useEffect, useState } from "react";
-import AddEventModal from "../components/AddEventModal/AddEventModal";
+import { createContext, useContext, useEffect, useState } from "react";
+import { UserContext } from "../App";
+import AddEventModal from "../components/AddEventModal";
 import Calendar from "../components/Calendar";
 import SchedulerHeader from "../components/SchedulerButtons";
-import EventData from "../models/EventData";
-import EventService from "../services/EventService";
 import SpinnerModal from "../components/SpinnerModal";
+import ClientData from "../models/client/Client";
+import EventData from "../models/event/EventData";
+import EventService from "../services/EventService";
 
 export interface SchedulerPropsContext {
   events: EventData[];
+  clients: ClientData[];
   selectedEvent?: EventData;
   setSelectedEvent: Function;
   submitEvent: Function;
@@ -18,6 +21,7 @@ export interface SchedulerPropsContext {
 
 const initialContext: SchedulerPropsContext = {
   events: [],
+  clients: [],
   selectedEvent: undefined,
   setSelectedEvent: (event: EventData) => {},
   submitEvent: (event: EventData) => {},
@@ -29,7 +33,10 @@ const initialContext: SchedulerPropsContext = {
 export const SchedulerContext = createContext(initialContext);
 
 const SchedulerLayout = () => {
-  const [events, setEvents] = useState([] as EventData[]);
+  const { user } = useContext(UserContext);
+
+  const [events, setEvents] = useState<EventData[]>([]);
+  const [clients, setClients] = useState<ClientData[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<EventData | undefined>();
   const [showAddEventModal, setShowAddEventModal] = useState(false);
   const [showScreenLoading, setShowScreenLoading] = useState(true);
@@ -40,8 +47,9 @@ const SchedulerLayout = () => {
   }, []);
 
   const findAllEvents = async () => {
-    const newEvents: EventData[] = await EventService.findAll();
+    const newEvents: EventData[] = await EventService.findAll(user?.uid);
     setEvents([...newEvents]);
+    setClients([...newEvents.map((event) => event.client_data)]);
     setShowScreenLoading(false);
   };
 
@@ -87,6 +95,7 @@ const SchedulerLayout = () => {
     <SchedulerContext.Provider
       value={{
         events,
+        clients,
         selectedEvent,
         setSelectedEvent: onSelectEvent,
         submitEvent,
