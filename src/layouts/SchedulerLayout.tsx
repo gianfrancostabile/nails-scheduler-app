@@ -44,6 +44,7 @@ const SchedulerLayout = () => {
   useEffect(() => {
     setShowScreenLoading(true);
     findAllEvents();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const findAllEvents = async () => {
