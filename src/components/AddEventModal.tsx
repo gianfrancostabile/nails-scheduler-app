@@ -10,7 +10,7 @@ import { ToastType } from "./toast/ToastBuilder";
 import deepEqual from "deep-equal";
 import DefaultInput from "./util/DefaultInput";
 import { EMAIL_REGEX, PHONE_REGEX } from "../utils/Constants";
-import { UserContext } from "../App";
+import { UserContext } from "../layouts/RootLayout";
 
 interface TimeButton {
   id: string;

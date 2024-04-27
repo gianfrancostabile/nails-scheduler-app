@@ -118,10 +118,10 @@ const Register = () => {
   };
 
   return (
-    <div className="overflow-y-hidden overflow-x-hidden flex justify-center items-center size-full h-screen md:inset-0">
-      <form className="rounded-lg bg-white shadow w-5/12">
+    <div className="overflow-y-hidden overflow-x-hidden flex justify-center items-center w-screen h-screen md:inset-0">
+      <form className="rounded-lg bg-white shadow w-full sm:w-8/12 m-4 sm:p-0 md:w-6/12 lg:w-4/12">
         <header className="flex items-center justify-between p-2 md:p-3 border-b rounded-t">
-          <h3 className="text-xl font-semibold text-gray-900">Regístrate</h3>
+          <h3 className="text-xl font-semibold text-gray-900">Crear una nueva cuenta</h3>
         </header>
         <div className="p-2 md:p-3 space-y-0 flex flex-col">
           <DefaultInput
@@ -155,7 +155,7 @@ const Register = () => {
         <footer className="flex items-center justify-between p-2 md:p-3 border-t border-gray-200 rounded-b">
           <NavLink
             to="/login"
-            className="text-cyan-700 hover:text-cyan-800 focus:outline-none font-medium text-sm py-2.5 text-center"
+            className="text-sky-500 hover:text-sky-600 focus:outline-none font-medium text-sm py-2.5 text-center"
           >
             Ya tengo una cuenta
           </NavLink>

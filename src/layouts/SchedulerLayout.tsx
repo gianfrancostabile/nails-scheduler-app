@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { UserContext } from "../App";
 import AddEventModal from "../components/AddEventModal";
 import Calendar from "../components/Calendar";
 import SchedulerHeader from "../components/SchedulerButtons";
@@ -7,6 +6,7 @@ import SpinnerModal from "../components/SpinnerModal";
 import ClientData from "../models/client/Client";
 import EventData from "../models/event/EventData";
 import EventService from "../services/EventService";
+import { UserContext } from "./RootLayout";
 
 export interface SchedulerPropsContext {
   events: EventData[];
