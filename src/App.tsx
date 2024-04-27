@@ -1,3 +1,5 @@
+import { User, onAuthStateChanged } from "firebase/auth";
+import { createContext, useEffect, useState } from "react";
 import {
   Navigate,
   Route,
@@ -6,11 +8,10 @@ import {
 } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import SpinnerModal from "./components/SpinnerModal";
+import FirebaseAuthentication from "./configuration/FirebaseAuthentication";
 import HomeLayout from "./layouts/HomeLayout";
 import ToastLayout from "./layouts/ToastLayout";
-import { createContext, useEffect, useState } from "react";
-import { User, onAuthStateChanged } from "firebase/auth";
-import FirebaseAuthentication from "./configuration/FirebaseAuthentication";
 
 interface UserPropsContext {
   user: User | undefined;
@@ -24,6 +25,7 @@ export const UserContext = createContext(initialPropsContext);
 
 function App() {
   const [user, setUser] = useState<User | undefined>(undefined);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     onAuthStateChanged(FirebaseAuthentication, (user) => {
@@ -32,6 +34,7 @@ function App() {
       } else {
         setUser(undefined);
       }
+      setLoading(false);
     });
   }, []);
 
@@ -42,10 +45,41 @@ function App() {
           <Routes>
             <Route
               path="/"
-              element={user ? <HomeLayout /> : <Navigate to="/login" />}
+              element={
+                isLoading ? (
+                  <SpinnerModal />
+                ) : user ? (
+                  <HomeLayout />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
             />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
+            <Route
+              path="/register"
+              element={
+                isLoading ? (
+                  <SpinnerModal />
+                ) : user ? (
+                  <Navigate to="/" />
+                ) : (
+                  <Register />
+                )
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                isLoading ? (
+                  <SpinnerModal />
+                ) : user ? (
+                  <Navigate to="/" />
+                ) : (
+                  <Login />
+                )
+              }
+            />
+            <Route path="/*" element={<Navigate to="/" />} />
           </Routes>
         </Router>
       </ToastLayout>
