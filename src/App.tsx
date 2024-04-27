@@ -8,7 +8,6 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import HomeLayout from "./layouts/HomeLayout";
 import ToastLayout from "./layouts/ToastLayout";
-import { render } from "@testing-library/react";
 import { createContext, useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import FirebaseAuthentication from "./configuration/FirebaseAuthentication";
