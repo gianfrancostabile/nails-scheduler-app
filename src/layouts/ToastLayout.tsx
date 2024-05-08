@@ -21,7 +21,7 @@ const ToastLayout: FunctionComponent<{ children: any }> = (props) => {
     if (newToast) {
       newToast.id = generateUUID();
       setToastList((previousValue) => [...previousValue, newToast]);
-      setTimeout(() => closeToast(newToast.id), 10000);
+      setTimeout(() => closeToast(newToast.id), 5000);
     }
   };
 
