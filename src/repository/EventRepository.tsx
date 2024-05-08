@@ -2,40 +2,49 @@ import {
   collection,
   deleteDoc,
   doc,
-  getDocs,
+  onSnapshot,
   query,
   setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
-import EventData from "../models/event/EventData";
+import { Subject } from "rxjs";
 import firestoreConnection from "../configuration/FirestoreConnection";
+import EventData from "../models/event/EventData";
 
 const eventsReference = collection(firestoreConnection, "Events");
 
-async function findAll(uid?: string): Promise<EventData[]> {
-  const documents = await getDocs(
+function findAll(uid?: string): Subject<EventData[]> {
+  const subject = new Subject<EventData[]>();
+  onSnapshot(
     uid
       ? query(eventsReference, where("created_by", "==", uid))
-      : query(eventsReference)
+      : query(eventsReference),
+    (querySnapshot) => {
+      const events: EventData[] = [];
+      querySnapshot.forEach((document) =>
+        events.push({ ...document.data(), id: document.id } as EventData)
+      );
+      console.log(events);
+      subject.next(events);
+    },
+    (_) => {
+      subject.next([]);
+    }
   );
-  return [
-    ...documents.docs.map(
-      (document) => ({ ...document.data(), id: document.id } as EventData)
-    ),
-  ];
+  return subject;
 }
 
-async function save(event: EventData) {
-  await setDoc(doc(eventsReference), mapEventData(event));
+function save(event: EventData): Promise<void> {
+  return setDoc(doc(eventsReference), mapEventData(event));
 }
 
-async function update(event: EventData) {
-  await updateDoc(doc(eventsReference, event.id), mapEventData(event));
+function update(event: EventData): Promise<void> {
+  return updateDoc(doc(eventsReference, event.id), mapEventData(event));
 }
 
-async function remove(id: string) {
-  await deleteDoc(doc(eventsReference, id));
+function remove(id: string): Promise<void> {
+  return deleteDoc(doc(eventsReference, id));
 }
 
 function mapEventData(event: EventData) {

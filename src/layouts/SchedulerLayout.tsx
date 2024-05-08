@@ -44,36 +44,37 @@ const SchedulerLayout = () => {
   useEffect(() => {
     setShowScreenLoading(true);
     findAllEvents();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setShowScreenLoading(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const findAllEvents = async () => {
-    const newEvents: EventData[] = await EventService.findAll(user?.uid);
-    setEvents([...newEvents]);
-    setClients([...newEvents.map((event) => event.client_data)]);
-    setShowScreenLoading(false);
+  const findAllEvents = () => {
+    EventService.findAll(user?.uid).subscribe((newEvents) => {
+      setEvents([...newEvents]);
+      setClients([...newEvents.map((event) => event.client_data)]);
+    });
   };
 
-  const submitEvent = async (event: EventData) => {
+  const submitEvent = (event: EventData) => {
     try {
       setShowScreenLoading(true);
       if (event.id) {
-        await EventService.update(event);
+        EventService.update(event);
       } else {
-        await EventService.save(event);
+        EventService.save(event);
       }
-      await findAllEvents();
     } catch (e) {
+    } finally {
       setShowScreenLoading(false);
     }
   };
 
-  const deleteEvent = async (id: string) => {
+  const deleteEvent = (id: string) => {
     try {
       setShowScreenLoading(true);
-      await EventService.remove(id);
-      await findAllEvents();
+      EventService.remove(id);
     } catch (e) {
+    } finally {
       setShowScreenLoading(false);
     }
   };
