@@ -25,7 +25,6 @@ function findAll(uid?: string): Subject<EventData[]> {
       querySnapshot.forEach((document) =>
         events.push({ ...document.data(), id: document.id } as EventData)
       );
-      console.log(events);
       subject.next(events);
     },
     (_) => {

@@ -39,9 +39,7 @@ const Register = () => {
         email,
         password
       )
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
+        .then(() => {
           setShowScreenLoading(false);
           registerToast({
             text: "Usuario creado",
@@ -49,10 +47,7 @@ const Register = () => {
           });
           navigate("/login");
         })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode, errorMessage);
+        .catch(() => {
           setShowScreenLoading(false);
           registerToast({
             text: "Hubo un error al crear el usuario",

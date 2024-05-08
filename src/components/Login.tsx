@@ -30,9 +30,7 @@ const Login = () => {
 		setShowScreenLoading(true);
     if (validateFields()) {
       await signInWithEmailAndPassword(FirebaseAuthentication, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          console.log(user);
+        .then(() => {
           setShowScreenLoading(false);
           registerToast({
             text: "Sesión iniciada",
@@ -40,10 +38,7 @@ const Login = () => {
           });
           navigate("/");
         })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode, errorMessage);
+        .catch(() => {
           setShowScreenLoading(false);
           registerToast({
             text: "Verifique que sus credenciales son correctas",

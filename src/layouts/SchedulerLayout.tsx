@@ -40,11 +40,12 @@ const SchedulerLayout = () => {
   const [selectedEvent, setSelectedEvent] = useState<EventData | undefined>();
   const [showAddEventModal, setShowAddEventModal] = useState(false);
   const [showScreenLoading, setShowScreenLoading] = useState(true);
+  const [isFirstLoading, setIsFirstLoading] = useState(true);
 
   useEffect(() => {
     setShowScreenLoading(true);
+    setIsFirstLoading(true);
     findAllEvents();
-    setShowScreenLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -52,6 +53,10 @@ const SchedulerLayout = () => {
     EventService.findAll(user?.uid).subscribe((newEvents) => {
       setEvents([...newEvents]);
       setClients([...newEvents.map((event) => event.client_data)]);
+      if (isFirstLoading) {
+        setShowScreenLoading(false);
+        setIsFirstLoading(false);
+      }
     });
   };
 
